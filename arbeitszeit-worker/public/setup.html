@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ersteinrichtung – Arbeitszeit Rapport</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell-narrow">
+  <div class="auth-card">
+    <div>
+      <h1>Ersteinrichtung</h1>
+      <p>Für jede der drei vorgesehenen Personen wird hier einmalig ein Passwort vergeben. Sobald alle drei eingerichtet sind, ist diese Seite gesperrt.</p>
+    </div>
+    <div id="setupBody">Lädt…</div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var body = document.getElementById("setupBody");
+
+  function render(pending){
+    if(!pending.length){
+      body.innerHTML = '<p>Die Einrichtung ist bereits abgeschlossen. <a href="/login.html">Zum Login</a></p>';
+      return;
+    }
+    body.innerHTML = pending.map(function(u){
+      return '<div class="setup-user" data-email="'+u.email+'">'
+        + '<h3>'+u.name+'</h3>'
+        + '<div class="auth-field"><label>E-Mail</label><input type="text" value="'+u.email+'" disabled></div>'
+        + '<div class="auth-field"><label>Passwort (mind. 8 Zeichen)</label><input type="password" class="pw-input" autocomplete="new-password"></div>'
+        + '<button class="auth-btn set-btn">Passwort setzen</button>'
+        + '<div class="auth-msg"></div>'
+        + '</div>';
+    }).join("");
+
+    document.querySelectorAll(".setup-user").forEach(function(card){
+      var email = card.getAttribute("data-email");
+      var btn = card.querySelector(".set-btn");
+      var pwInput = card.querySelector(".pw-input");
+      var msg = card.querySelector(".auth-msg");
+      btn.addEventListener("click", function(){
+        var password = pwInput.value;
+        if(password.length < 8){ msg.textContent = "Mindestens 8 Zeichen."; msg.className = "auth-msg"; return; }
+        btn.disabled = true;
+        fetch("/api/setup", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ email: email, password: password })
+        }).then(function(res){ return res.json().then(function(data){ return {ok: res.ok, data: data}; }); })
+          .then(function(r){
+            if(!r.ok){
+              msg.textContent = r.data.error === "already_set" ? "Bereits eingerichtet." : "Fehler beim Speichern.";
+              msg.className = "auth-msg";
+              btn.disabled = false;
+              return;
+            }
+            msg.textContent = "Gespeichert.";
+            msg.className = "auth-msg ok";
+            card.querySelector(".pw-input").disabled = true;
+            btn.remove();
+            refresh();
+          }).catch(function(){
+            msg.textContent = "Fehler beim Speichern. Bitte erneut versuchen.";
+            msg.className = "auth-msg";
+            btn.disabled = false;
+          });
+      });
+    });
+  }
+
+  function refresh(){
+    fetch("/api/setup-status").then(function(res){ return res.json(); }).then(function(data){
+      render(data.pending);
+    }).catch(function(){
+      body.textContent = "Verbindung fehlgeschlagen. Bitte Seite neu laden.";
+    });
+  }
+
+  refresh();
+})();
+</script>
+</body>
+</html>

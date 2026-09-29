@@ -1,0 +1,14 @@
+{
+  "name": "arbeitszeit-erik",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate:remote": "wrangler d1 execute arbeitszeit_erik --remote --file=./schema.sql",
+    "db:migrate:local": "wrangler d1 execute arbeitszeit_erik --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

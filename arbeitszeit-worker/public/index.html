@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arbeitszeit Rapport</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app" id="normalApp">
+
+  <header>
+    <div class="brand">
+      <div class="brand-mark" id="brandMark">?</div>
+      <div>
+        <h1>Arbeitszeit Rapport</h1>
+        <div class="sub" id="brandSub">Arbeitszeiterfassung</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="who">
+        <span id="whoName"></span>
+        <a id="adminLink" href="/freigabe.html" hidden>Freigabe-Tool</a>
+        <button class="link-btn" id="logoutBtn">Abmelden</button>
+      </div>
+      <div class="week-pill">Diese Woche <strong id="weekTotal">0,0 Std.</strong></div>
+      <div class="absence-pill" id="absencePill">
+        <span id="absenceStatus">Freigabe: Daniel Satzinger</span>
+        <button class="absence-toggle" id="absenceToggleBtn">Vertretung aktivieren</button>
+      </div>
+      <div class="absence-form" id="absenceForm" hidden>
+        <select id="absenceReasonSelect">
+          <option value="Urlaub">Urlaub</option>
+          <option value="Krankheit">Krankheit</option>
+          <option value="Sonstiges">Sonstiges</option>
+        </select>
+        <button class="absence-confirm" id="absenceConfirmBtn">Best&auml;tigen</button>
+        <button class="absence-cancel" id="absenceCancelBtn">Abbrechen</button>
+      </div>
+    </div>
+  </header>
+  <div class="absence-msg" id="absenceMsg"></div>
+
+  <div class="approval-banner" id="approvalBanner">
+    <div class="ab-row">
+      <span class="ab-icon" id="approvalIcon">&#9888;&#65039;</span>
+      <div class="ab-text" id="approvalText"></div>
+      <div class="ab-actions" id="approvalActions"></div>
+    </div>
+    <div class="ab-msg" id="approvalMsg"></div>
+  </div>
+
+  <section class="card">
+    <div class="date-nav">
+      <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag">&#8592;</button>
+      <div class="date-label">
+        <span id="dateLabelMain"></span> <span class="y" id="dateLabelYear"></span>
+      </div>
+      <button class="today-btn" id="jumpToday">Heute</button>
+      <input type="date" id="datePicker">
+      <button class="icon-btn" id="nextDay" aria-label="N&auml;chster Tag">&#8594;</button>
+    </div>
+
+    <form class="entry-form" id="entryForm">
+      <div class="field">
+        <label for="fromInput">Von</label>
+        <select id="fromInput" class="time-select" required></select>
+      </div>
+      <div class="field">
+        <label for="toInput">Bis</label>
+        <select id="toInput" class="time-select" required></select>
+      </div>
+      <div class="field">
+        <label for="catInput">T&auml;tigkeit</label>
+        <select id="catInput" required></select>
+      </div>
+      <div class="field">
+        <label for="noteInput">Notiz (optional)</label>
+        <input type="text" id="noteInput" maxlength="140" placeholder="z. B. Kunde Meier">
+      </div>
+      <div class="form-buttons">
+        <button type="submit" class="add-btn" id="addBtn">+ Eintrag</button>
+        <button type="button" class="cancel-edit-btn" id="cancelEditBtn" hidden>Abbrechen</button>
+      </div>
+    </form>
+    <div class="form-msg" id="formMsg"></div>
+  </section>
+
+  <section class="card">
+    <h2>Eintr&auml;ge <span class="hint" id="entriesHint"></span></h2>
+    <div class="break-info">Gesetzliche Pause wird automatisch abgezogen: 30 Min. ab 6 Std., 45 Min. ab 9 Std. Arbeitszeit pro Tag.</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Von</th><th>Bis</th><th>Dauer</th><th>T&auml;tigkeit</th><th>Notiz</th><th></th></tr>
+        </thead>
+        <tbody id="entriesBody">
+          <tr class="empty-row"><td colspan="6">L&auml;dt&hellip;</td></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Gesamt (netto)</td>
+            <td class="dur-cell"><span id="dayTotal">0:00</span><div class="dur-note" id="dayTotalNote"></div></td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Verlauf <span class="hint">letzte erfasste Tage</span></h2>
+    <div class="hist-list" id="histList">
+      <div class="empty-row" style="padding:20px 0; color:var(--text-muted); font-size:13.5px;">L&auml;dt&hellip;</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Urlaub <span class="hint">pauschal 8 Std. pro Urlaubstag</span></h2>
+    <div class="export-row">
+      <div class="field"><label for="vacationFrom">Von</label><input type="date" id="vacationFrom"></div>
+      <div class="field"><label for="vacationTo">Bis</label><input type="date" id="vacationTo"></div>
+      <button class="export-btn" id="vacationAddBtn">+ Urlaubstage eintragen</button>
+    </div>
+    <div class="toast" id="vacationMsg"></div>
+    <div class="vacation-list" id="vacationList"><div class="vacation-empty">L&auml;dt&hellip;</div></div>
+  </section>
+
+  <section class="card">
+    <h2>Export <span class="hint">als Excel-Datei (.xlsx)</span></h2>
+    <div class="export-row">
+      <div class="field"><label for="exportFrom">Von</label><input type="date" id="exportFrom"></div>
+      <div class="field"><label for="exportTo">Bis</label><input type="date" id="exportTo"></div>
+      <button class="export-btn" id="exportBtn">&#8681; Als Excel exportieren</button>
+    </div>
+    <div class="toast" id="exportMsg"></div>
+  </section>
+
+  <footer>Alle Eintr&auml;ge sind f&uuml;r Erik, Daniel und Simon sichtbar.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="/common.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

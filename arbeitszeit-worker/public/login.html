@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anmelden – Arbeitszeit Rapport</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell-narrow">
+  <div class="auth-card">
+    <div>
+      <h1>Arbeitszeit Rapport</h1>
+      <p>Bitte anmelden.</p>
+    </div>
+    <form id="loginForm">
+      <div class="auth-field"><label for="email">E-Mail</label><input type="email" id="email" autocomplete="username" required></div>
+      <div class="auth-field" style="margin-top:12px;"><label for="password">Passwort</label><input type="password" id="password" autocomplete="current-password" required></div>
+      <button type="submit" class="auth-btn" id="loginBtn" style="margin-top:16px;width:100%;">Anmelden</button>
+      <div class="auth-msg" id="loginMsg"></div>
+    </form>
+    <p style="font-size:12px;">Noch kein Passwort vergeben? <a href="/setup.html">Zur Ersteinrichtung</a></p>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var form = document.getElementById("loginForm");
+  var msg = document.getElementById("loginMsg");
+  var btn = document.getElementById("loginBtn");
+
+  var params = new URLSearchParams(window.location.search);
+  var next = params.get("next") || "/index.html";
+
+  // Already logged in? skip straight to the app.
+  fetch("/api/me", { credentials: "same-origin" }).then(function(res){
+    if(res.ok) window.location.href = next;
+  }).catch(function(){});
+
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    msg.textContent = "";
+    btn.disabled = true;
+    fetch("/api/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      credentials: "same-origin",
+      body: JSON.stringify({
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value
+      })
+    }).then(function(res){ return res.json().then(function(data){ return {ok: res.ok, data: data}; }); })
+      .then(function(r){
+        if(!r.ok){
+          msg.textContent = "E-Mail oder Passwort falsch.";
+          btn.disabled = false;
+          return;
+        }
+        window.location.href = next;
+      }).catch(function(){
+        msg.textContent = "Verbindung fehlgeschlagen. Bitte erneut versuchen.";
+        btn.disabled = false;
+      });
+  });
+})();
+</script>
+</body>
+</html>

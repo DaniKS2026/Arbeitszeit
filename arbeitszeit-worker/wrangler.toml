@@ -1,0 +1,12 @@
+name = "arbeitszeit-erik"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "arbeitszeit_erik"
+database_id = "6e564cef-7e65-4bea-bad0-85ccef542f2a"

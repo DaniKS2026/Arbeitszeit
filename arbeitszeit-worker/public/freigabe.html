@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Freigabe-Tool</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="app" style="max-width:720px;">
+  <header>
+    <div class="brand">
+      <div class="brand-mark warn">&#128274;</div>
+      <div>
+        <h1>Freigabe-Tool</h1>
+        <div class="sub">Interner Zugang &middot; nur Daniel Satzinger &amp; Simon Demant</div>
+      </div>
+    </div>
+    <div class="who">
+      <span id="whoName"></span>
+      <a href="/index.html">Zur Zeiterfassung</a>
+      <button class="link-btn" id="logoutBtn">Abmelden</button>
+    </div>
+  </header>
+
+  <div class="toast err" id="globalMsg"></div>
+
+  <section class="card">
+    <h2>Offene Anfragen <span class="hint" id="pendingHint"></span></h2>
+    <div id="pendingList"><div class="admin-empty">L&auml;dt&hellip;</div></div>
+  </section>
+
+  <section class="card">
+    <h2>Zuletzt freigegeben <span class="hint">letzte 10 Wochen</span></h2>
+    <div id="approvedList"><div class="admin-empty">L&auml;dt&hellip;</div></div>
+  </section>
+</div>
+
+<script src="/common.js"></script>
+<script src="/freigabe.js"></script>
+</body>
+</html>
