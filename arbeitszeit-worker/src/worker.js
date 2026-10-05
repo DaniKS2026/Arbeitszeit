@@ -23,6 +23,23 @@ import {
   setAbsence
 } from "./api.js";
 
+// Signing key: use the SESSION_SECRET variable if present, otherwise create one
+// once and keep it in the private database (survives every redeploy).
+let cachedSecret = null;
+async function resolveSecret(env) {
+  if (env.SESSION_SECRET && String(env.SESSION_SECRET).length >= 16) return String(env.SESSION_SECRET);
+  if (cachedSecret) return cachedSecret;
+  let row = await env.DB.prepare("SELECT value FROM config WHERE key='session_secret'").first();
+  if (!row) {
+    const bytes = crypto.getRandomValues(new Uint8Array(32));
+    const hex = Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
+    await env.DB.prepare("INSERT OR IGNORE INTO config (key, value) VALUES ('session_secret', ?)").bind(hex).run();
+    row = await env.DB.prepare("SELECT value FROM config WHERE key='session_secret'").first();
+  }
+  cachedSecret = row.value;
+  return cachedSecret;
+}
+
 async function getSession(request, env) {
   const token = readCookie(request, "session");
   if (!token) return null;
@@ -88,7 +105,8 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) {
       try {
-        return await handleApi(request, env, url);
+        const apiEnv = { ...env, SESSION_SECRET: await resolveSecret(env) };
+        return await handleApi(request, apiEnv, url);
       } catch (err) {
         return json({ error: "server_error", message: String((err && err.message) || err) }, 500);
       }
