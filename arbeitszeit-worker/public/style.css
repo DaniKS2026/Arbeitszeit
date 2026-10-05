@@ -23,6 +23,9 @@
   --cat-buero:#556270;        --cat-buero-soft:#e7ebed;
   --cat-material:#5f7a2e;     --cat-material-soft:#e7eedc;
   --cat-urlaub:#2f7fbd;       --cat-urlaub-soft:#dcebf5;
+  --cat-projekt:#2a9d6f;      --cat-projekt-soft:#def3ea;
+  --cat-intern:#cc6b2c;       --cat-intern-soft:#f9e7da;
+  --cat-pmeeting:#d1478f;     --cat-pmeeting-soft:#fbe3ef;
   --cat-sonst:#8a8074;        --cat-sonst-soft:#efebe5;
 }
 @media (prefers-color-scheme: dark){
@@ -41,6 +44,9 @@
     --cat-buero:#a6b6bf; --cat-buero-soft:#252f33;
     --cat-material:#a3c26a; --cat-material-soft:#26330f;
     --cat-urlaub:#6fb3e0; --cat-urlaub-soft:#16283a;
+    --cat-projekt:#6fd3a5; --cat-projekt-soft:#14301f;
+    --cat-intern:#f0a06a; --cat-intern-soft:#3a2414;
+    --cat-pmeeting:#f08cc0; --cat-pmeeting-soft:#3a1d2e;
     --cat-sonst:#bdb3a4; --cat-sonst-soft:#2c2822;
   }
 }
@@ -59,6 +65,9 @@
   --cat-buero:#a6b6bf; --cat-buero-soft:#252f33;
   --cat-material:#a3c26a; --cat-material-soft:#26330f;
   --cat-urlaub:#6fb3e0; --cat-urlaub-soft:#16283a;
+  --cat-projekt:#6fd3a5; --cat-projekt-soft:#14301f;
+  --cat-intern:#f0a06a; --cat-intern-soft:#3a2414;
+  --cat-pmeeting:#f08cc0; --cat-pmeeting-soft:#3a1d2e;
   --cat-sonst:#bdb3a4; --cat-sonst-soft:#2c2822;
 }
 
